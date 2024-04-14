@@ -1,0 +1,15 @@
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\bin\Debug\net8.0\FolkApplication.EventStore.deps.json
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\bin\Debug\net8.0\FolkApplication.EventStore.dll
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\bin\Debug\net8.0\FolkApplication.EventStore.pdb
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\bin\Debug\net8.0\FolkApplication.Framework.dll
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\bin\Debug\net8.0\FolkApplication.Framework.pdb
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\obj\Debug\net8.0\FolkApplication.EventStore.csproj.AssemblyReference.cache
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\obj\Debug\net8.0\FolkApplication.EventStore.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\obj\Debug\net8.0\FolkApplication.EventStore.AssemblyInfoInputs.cache
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\obj\Debug\net8.0\FolkApplication.EventStore.AssemblyInfo.cs
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\obj\Debug\net8.0\FolkApplication.EventStore.csproj.CoreCompileInputs.cache
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\obj\Debug\net8.0\FolkApplication.EventStore.csproj.CopyComplete
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\obj\Debug\net8.0\FolkApplication.EventStore.dll
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\obj\Debug\net8.0\refint\FolkApplication.EventStore.dll
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\obj\Debug\net8.0\FolkApplication.EventStore.pdb
+D:\Projects\Personal\FolkApplication.EventSourced\FolkApplication\Infrastructure\FolkApplication.EventStore\obj\Debug\net8.0\ref\FolkApplication.EventStore.dll
