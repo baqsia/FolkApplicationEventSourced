@@ -4,7 +4,7 @@ using FolkApplication.Framework;
 
 namespace FolkApplication.Domain.Song;
 
-public class Song: AggregateRoot
+public record Song: AggregateRoot
 {
     public string Name { get; set; } = default!;
 

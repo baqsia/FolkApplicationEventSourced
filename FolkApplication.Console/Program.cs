@@ -34,19 +34,30 @@ services.AddSingleton<IDomainEventRepository, DomainEventRepository>()
         options.Events.StreamIdentity = StreamIdentity.AsGuid;
 
         options.Projections.LiveStreamAggregation<Song>();
-        options.Projections.Add(new SongProjectionViewStream(sp.GetRequiredService<IDomainViewRepository>()),
-            ProjectionLifecycle.Inline);
+        options.Projections.Add(new SongProjectionViewStream(sp.GetRequiredService<IDomainViewRepository>()), ProjectionLifecycle.Inline);
 
         return options;
     }).AddAsyncDaemon(DaemonMode.Solo);
 services.AddDbContextPool<SongDbContext>(opt => { opt.UseNpgsql(sql); });
 services.AddSingleton<ElasticsearchClient>(sp =>
 {
-    var settings = new ElasticsearchClientSettings("personal_learning:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvJGQzYmY1ZGZhNTY2NzQ0OGQ5NzAyNmQwZTU0M2E4YjE5JDRiNDYwOGM4YmNlYTQ4ODI5NGUwNDU0ZjZmOTdjNjMw", 
-            new BasicAuthentication("elastic", "jQaXkxkzGlksutf4DRyVHtRr")); 
+    var settings = new ElasticsearchClientSettings(
+        "personal_learning:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvJGQzYmY1ZGZhNTY2NzQ0OGQ5NzAyNmQwZTU0M2E4YjE5JDRiNDYwOGM4YmNlYTQ4ODI5NGUwNDU0ZjZmOTdjNjMw",
+        new BasicAuthentication("elastic", "jQaXkxkzGlksutf4DRyVHtRr"));
 
     var client = new ElasticsearchClient(settings);
-    client.Indices.CreateAsync(ElasticIndices.SongIndex)
+    client.Indices.CreateAsync(ElasticIndices.SongIndex, def =>
+        {
+            def.Mappings(map =>
+            {
+                map.Properties(new Properties
+                {
+                    { "id", new TextProperty() },
+                    { "name", new TextProperty() },
+                    { "version", new LongNumberProperty() }
+                });
+            });
+        })
         .GetAwaiter().GetResult();
     return client;
 });
@@ -60,9 +71,13 @@ var domainViewRepo = provider.GetRequiredService<IDomainViewRepository>();
 // var song = Song.Create("whats up with that");
 // await domainEventRepo.Store(song, tokenSource.Token);
 
-var song = await domainViewRepo.QueryFirstAsync<Song>(Guid.Parse("4f0b17d9-a9b5-4c84-a805-38d1adcab100"), 1, tokenSource.Token);
-song!.Rate(5);
-await domainEventRepo.UpdateAsync(song, tokenSource.Token);
+// var songs = await domainViewRepo.QueryAsync<SongView>();
+ 
+var song = await domainViewRepo.QueryFirstAsync<SongView>(Guid.Parse("4f0b17d9-a9b5-4c84-a805-38d1adcab100"), tokenSource.Token);
+
+var songAggregate = await domainEventRepo.FindProjection<Song>(song!.Id, song.Version, tokenSource.Token);
+songAggregate!.Rate(10);
+await domainEventRepo.UpdateAsync(songAggregate, tokenSource.Token);
 
 // var stream = await domainEventRepo.StreamByIdAsync(song.Id, song.Version, CancellationToken.None);
 // var aggregate = await domainEventRepo.FindProjection<Song>(song.Id, song.Version, CancellationToken.None);

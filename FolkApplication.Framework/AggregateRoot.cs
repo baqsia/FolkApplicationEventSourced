@@ -1,6 +1,6 @@
 ﻿namespace FolkApplication.Framework;
 
-public class AggregateRoot
+public record AggregateRoot
 {
     private readonly ICollection<DomainEvent> _events = [];
     public DomainEvent[] Events() => _events.ToArray();
