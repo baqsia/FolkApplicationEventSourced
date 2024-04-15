@@ -17,20 +17,33 @@ public class DomainEventRepository(IDocumentStore documentSession) : IDomainEven
         return action.Id;
     }
 
-    public async Task<IReadOnlyList<IEvent>> StreamByIdAsync(Guid tid, long version, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<IEvent>> StreamByIdAsync(Guid tid, long version,
+        CancellationToken cancellationToken)
     {
         await using var session = documentSession.LightweightSession();
         return await session.Events.FetchStreamAsync(tid, version, token: cancellationToken);
     }
-    
-    public async Task<TAggregate?> FindProjection<TAggregate>(Guid id, long version, CancellationToken cancellationToken)
+
+    public async Task<TAggregate?> FindProjection<TAggregate>(Guid id, long version,
+        CancellationToken cancellationToken)
         where TAggregate : AggregateRoot
     {
         await using var session = documentSession.LightweightSession();
         return await session.Events.AggregateStreamAsync<TAggregate>(id, token: cancellationToken);
     }
 
-    public async Task<IPagedList<TAggregate>?> QueryPaged<TAggregate>(int pageNumber = 1, int pageSize = 20, CancellationToken cancellationToken = default) where TAggregate : AggregateRoot
+    public async Task<Guid> UpdateAsync<TAggregate>(TAggregate aggregate, CancellationToken cancellationToken)
+        where TAggregate : AggregateRoot
+    {
+        await using var session = documentSession.LightweightSession();
+        // ReSharper disable once CoVariantArrayConversion
+        await session.Events.AppendOptimistic(aggregate.Id, cancellationToken, aggregate.Events());
+        await session.SaveChangesAsync(cancellationToken);
+        return aggregate.Id;
+    }
+
+    public async Task<IPagedList<TAggregate>?> QueryPaged<TAggregate>(int pageNumber = 1, int pageSize = 20,
+        CancellationToken cancellationToken = default) where TAggregate : AggregateRoot
     {
         await using var session = documentSession.QuerySession();
         return await session.Query<TAggregate>()

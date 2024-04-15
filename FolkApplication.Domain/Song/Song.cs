@@ -7,6 +7,8 @@ namespace FolkApplication.Domain.Song;
 public class Song: AggregateRoot
 {
     public string Name { get; set; } = default!;
+
+    public int Rating { get; set; }
     
     public Song()
     {
@@ -25,9 +27,20 @@ public class Song: AggregateRoot
         return new Song(name);
     }
 
+    public void Rate(int rating)
+    {
+        Event(new RateSongEvent(Id, rating));
+    }
+    
+    
     public void Apply(SongCreatedEvent @event)
     {
         Name = @event.Name;
         Id = @event.SongId;
+    }
+
+    public void Apply(RateSongEvent @event)
+    {
+        Rating = @event.Rating;
     }
 }
