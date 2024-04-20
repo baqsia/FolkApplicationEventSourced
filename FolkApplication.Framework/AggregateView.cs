@@ -2,6 +2,6 @@
 
 public record AggregateView
 {
-    public Guid Id { get; set; }
-    public int Version { get; set; }
+    public string Id { get; init; } = default!;
+    public long Version { get; set; }
 }

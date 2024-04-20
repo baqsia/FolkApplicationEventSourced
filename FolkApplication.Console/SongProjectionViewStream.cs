@@ -17,10 +17,25 @@ public class SongProjectionViewStream : EventProjection
         _viewRepository = viewRepository;
         ProjectAsync<SongCreatedEvent>(async (e, op) =>
         {
-            await GetAndUpdate(e.SongId, view =>
+            await GetAndUpdate(e.SongId, _ =>
             {
-                view.Name = e.Name;
-                view.Version = 1;
+                var view = new SongView
+                {
+                    Name = e.Name,
+                    Version = e.Version,
+                    Singers = e.Singers.Select(singer => new SingerView
+                    {
+                        Name = singer.Name,
+                        Songs = singer.Songs.Select(song => new SongView
+                        {
+                            Name = song.Name,
+                            Version = song.Version,
+                            Id = song.Id.ToString()
+                        }).ToList(),
+                        IsBand = singer.IsBand
+                    }).ToList(),
+                    Id = e.SongId.ToString()
+                };
                 return view;
             });
         });
@@ -29,34 +44,32 @@ public class SongProjectionViewStream : EventProjection
         {
             await GetAndUpdate(e.SongId, view =>
             {
-                view.Rating = e.Rating;
+                view!.Rating = e.Rating;
+                view.Version = e.Version;
+                return view;
+            });
+        });
+        
+        ProjectAsync<LyricAddedEvent>(async (e, op) =>
+        {
+            await GetAndUpdate(e.SongId, view =>
+            {
+                view!.Lyrics.Add(new Lyric(e.Value)); 
+                view.Version = e.Version;
                 return view;
             });
         });
     }
 
-    private async Task GetAndUpdate(Guid streamId, Func<SongView, SongView> onView)
+    private async Task GetAndUpdate(Guid streamId, Func<SongView?, SongView> onView)
     {
         var view = await _viewRepository.QueryFirstAsync<SongView>(streamId, CancellationToken.None);
-        await _viewRepository.UpdateAsync(onView(view!), CancellationToken.None);
-    }
+        if (view is not null)
+        {
+            await _viewRepository.UpdateAsync(onView(view), CancellationToken.None);
+            return;
+        }
 
-    // public async Task ApplyAsync(IDocumentOperations operations, IReadOnlyList<StreamAction> streams,
-    //     CancellationToken cancellation)
-    // {
-    //     foreach (var stream in streams)
-    //     {
-    //         var view = await viewRepository.QueryFirstAsync<SongView>(stream.Id,
-    //             cancellationToken: cancellation);
-    //         if (view is not null)
-    //         {
-    //             if (view.Version < stream.Version)
-    //                 await CopyAsDocument(view, stream, cancellation);
-    //
-    //             continue;
-    //         }
-    //
-    //         await InitialCopyOfDocument(stream, cancellation);
-    //     }
-    // }
+        await _viewRepository.PushAsync(onView(view), CancellationToken.None);
+    }
 }
