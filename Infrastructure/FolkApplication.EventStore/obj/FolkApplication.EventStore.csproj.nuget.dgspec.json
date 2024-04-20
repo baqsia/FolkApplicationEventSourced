@@ -41,6 +41,10 @@
             "Marten": {
               "target": "Package",
               "version": "[7.7.0, )"
+            },
+            "MongoDB.Bson": {
+              "target": "Package",
+              "version": "[2.25.0, )"
             }
           },
           "imports": [
